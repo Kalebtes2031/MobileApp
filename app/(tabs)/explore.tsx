@@ -6,6 +6,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { StatusBar } from 'expo-status-bar';
+import { View, Text } from 'react-native';
 
 export default function TabTwoScreen() {
   return (
@@ -76,7 +78,7 @@ export default function TabTwoScreen() {
         </ExternalLink>
       </Collapsible>
       <Collapsible title="Animations">
-        <ThemedText>
+        <ThemedText className='bg-white'>
           This template includes an example of an animated component. The{' '}
           <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
           the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
@@ -91,6 +93,9 @@ export default function TabTwoScreen() {
           ),
         })}
       </Collapsible>
+      <View>
+        <Text className='text-white text-[20px]'>hellow</Text>
+      </View>
     </ParallaxScrollView>
   );
 }
