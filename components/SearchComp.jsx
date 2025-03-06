@@ -3,8 +3,10 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 const SearchComp = ({ placeholder = 'Search...', onSearch = () => {} }) => {
+  const colorScheme = useColorScheme();
   const [text, setText] = useState('');
 
   const handleChangeText = (input) => {
@@ -18,13 +20,17 @@ const SearchComp = ({ placeholder = 'Search...', onSearch = () => {} }) => {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container,
+      { backgroundColor: colorScheme === "dark" ? "#333" : "#fff" },]
+    }>
       {/* Left side search icon */}
-      <MaterialIcons name="search" size={24} color="white" style={styles.icon} />
+      <MaterialIcons name="search" size={24} style={[styles.icon, { color: colorScheme === "dark" ? "#fff" : "#333" },]} />
 
       {/* Text input for search */}
       <TextInput
-        style={styles.input}
+        style={[styles.input,
+          { color: colorScheme === "dark" ? "#fff" : "#333" },
+        ]}
         placeholder={placeholder}
         value={text}
         onChangeText={handleChangeText}
@@ -42,10 +48,9 @@ const SearchComp = ({ placeholder = 'Search...', onSearch = () => {} }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height:200,
+    height:50,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f1f1f1',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 25,
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    // color: '#333',
   },
   clearButton: {
     marginLeft: 10,

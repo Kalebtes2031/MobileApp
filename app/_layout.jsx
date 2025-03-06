@@ -45,7 +45,7 @@ export default function RootLayout() {
             { backgroundColor: colorScheme === "dark" ? "#000" : "#fff" },
           ]}
         >
-          <Header />
+          {/* <Header /> */}
           
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -1,3 +1,6 @@
+import CardList from "@/components/Card";
+import Header from "@/components/Header";
+import SearchComp from "@/components/SearchComp";
 import React, { useState, useEffect, useRef } from "react";
 import { ScrollView, View, Text, Image, Dimensions, StyleSheet } from "react-native";
 
@@ -45,32 +48,56 @@ export default function HomeScreen() {
   }, [currentIndex]);
 
   return (
-    <ScrollView
-      ref={scrollViewRef}
-      horizontal
-      pagingEnabled
-      showsHorizontalScrollIndicator={false}
-      style={styles.scrollView} // Using normal StyleSheet styling
-    >
-      {images.map((img, index) => (
-        <View key={index} style={styles.card}>
-          {/* Background image */}
-          <Image source={img.image} style={styles.image} />
-          {/* Semi-transparent overlay */}
-          <View style={styles.overlay} />
-          {/* Text overlay */}
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>{img.text}</Text>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <Header />
+        <SearchComp />
+      </View>
+
+   
+
+      {/* Horizontal Image Carousel */}
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollView}
+      >
+        {images.map((img, index) => (
+          <View key={index} style={styles.card}>
+            {/* Background image */}
+            <Image source={img.image} style={styles.image} />
+            {/* Semi-transparent overlay */}
+            <View style={styles.overlay} />
+            {/* Text overlay */}
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>{img.text}</Text>
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
+        <CardList />
+      
+      
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  headerContainer: {
+     // Space between Header and SearchComp
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 80,
+    
+  },
   scrollView: {
-    marginTop: 60,
     paddingVertical: 20,
     paddingHorizontal: 20,
   },
