@@ -7,11 +7,12 @@ const Card = ({ image, name, price, category }) => {
   const colorScheme = useColorScheme();
   return (
     <View style={styles.card}>
-      <Image source={image} style={styles.image} />
+      <Image source={image} style={styles.image} className="object-top" />
       <Text
+        className="font-secondary"
         style={[
           styles.category,
-          { color: colorScheme === "dark" ? "#333" : "#7E0201" },
+          { color: colorScheme === "dark" ? "#333" : "#B9B4C7" },
         ]}
       >
         {category}
@@ -27,41 +28,40 @@ const Card = ({ image, name, price, category }) => {
       <Text
         style={[
           styles.price,
-          { color: colorScheme === "dark" ? "#333" : "#7E0201" },
+          { color: colorScheme === "dark" ? "#333" : "#5F374B" },
         ]}
       >
         {price}
       </Text>
-      
     </View>
   );
 };
 
-const CardList = () => {
+const CardList = ({ name }) => {
   const colorScheme = useColorScheme();
   const cards = [
     {
       image: require("../assets/images/babyboy.jpg"),
       name: "BabyBoy",
-      price: "$10",
+      price: "Br 1000.00",
       category: "KIDS",
     },
     {
       image: require("../assets/images/beteseb.jpg"),
       name: "Malhib Collection",
-      price: "$20",
+      price: "Br 2000.00",
       category: "Family",
     },
     {
       image: require("../assets/images/habeshakemis2.png"),
       name: "Habesha Kemis",
-      price: "$30",
+      price: "Br 3000.00",
       category: "Women",
     },
     {
       image: require("../assets/images/newkemis.jpg"),
       name: "Habesha Kemis",
-      price: "$40",
+      price: "Br 4000.00",
       category: "Women",
     },
   ];
@@ -74,7 +74,7 @@ const CardList = () => {
           { color: colorScheme === "dark" ? "#fff" : "#7E0201" },
         ]}
       >
-        Most Popular
+        {name}
       </Text>
       <View style={styles.row}>
         {cards.map((card, index) => (
@@ -109,31 +109,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   card: {
-    width: "48%",
+    width: "40%",
     backgroundColor: "#f8f8f8",
-    padding: 10,
-    marginBottom: 20,
+    // paddingTop: 7,
+    marginBottom: 38,
+    marginHorizontal: 18,
     borderRadius: 10,
     alignItems: "center",
   },
   image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
+    width: "100%",
+    height: 145,
+    marginBottom: 1,
+    objectFit: "top",
+    objectFit: "cover",
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
   },
   name: {
     fontSize: 14,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 3,
   },
   price: {
-    fontSize: 16,
-    color: "#888",
+    fontSize: 10,
+    // color: "#888",
     marginBottom: 5,
   },
   category: {
-    fontSize: 14,
-    color: "#aaa",
+    fontSize: 10,
+    // color: "#000",
   },
 });
 
