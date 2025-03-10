@@ -18,37 +18,7 @@ import CardList from "@/components/Card";
 import { RefreshControl } from "react-native";
 import SearchComp from "@/components/SearchComp";
 
-const products = [
-  {
-    id: "1",
-    name: "Product 1",
-    price: "$10",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: "2",
-    name: "Product 2",
-    price: "$20",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: "3",
-    name: "Product 3",
-    price: "$30",
-    image: "https://via.placeholder.com/150",
-  },
-];
-
-const ProductItem = ({ item }) => (
-  <View style={styles.productItem}>
-    <Image source={{ uri: item.image }} style={styles.productImage} />
-    <Text style={styles.productName}>{item.name}</Text>
-    <Text style={styles.productPrice}>{item.price}</Text>
-    <Button title="Add to Cart" onPress={() => alert("Added to cart")} />
-  </View>
-);
-
-const Profile = () => {
+const TrackOrder = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -84,41 +54,51 @@ const Profile = () => {
             >
               <View style={styles.overlay} />
               <View style={styles.textContainer}>
-                <Text style={[styles.text, styles.text1]}>Shop</Text>
-                <Text style={styles.text}>Home {">>"} Shop </Text>
+                <Text style={[styles.text, styles.text1]}>Track Order</Text>
+                <Text style={styles.text}>Home {">>"} Track Order </Text>
               </View>
             </ImageBackground>
           </View>
-          <View>
+          {/* <View>
             <SearchComp/>
-          </View>
+          </View> */}
 
-          {/* filter container */}
-          <View style={styles.filterContainer}>
-            <Pressable
-              style={styles.button}
-              onPress={console.log("I was pressed")}
-            >
-              <AntDesign name="filter" size={24} color="white" />
-              <Text className="text-white">Filter</Text>
-            </Pressable>
-            <Picker
-              selectedValue={selectedValue}
-              onValueChange={(itemValue) => setSelectedValue(itemValue)}
+          <View className="">
+            <Text
               style={[
-                styles.picker,
-                { backgroundColor: colorScheme === "dark" ? "#fff" : "#fff" },
-                { color: colorScheme === "dark" ? "#000" : "#333" },
+                styles.textorder,
+                { color: colorScheme === "dark" ? "white" : " black" },
               ]}
-              className="border border-black"
             >
-              <Picker.Item label="Default sorting" value="option1" />
-              <Picker.Item label="Sort by popularity" value="option2" />
-              <Picker.Item label="Sort by latest" value="option3" />
-            </Picker>
+              {" "}
+              To track your order please enter your Order ID in the box below
+              and press the "Track" button. This was given to you on your
+              receipt and in the confirmation email you should have received.
+            </Text>
           </View>
-          <View className="mb-12">
-            <CardList name={newest} />
+          <View style={styles.orderContainer}>
+            <View style={styles.orderid}>
+              <Text
+                style={[
+                  styles.ordertext,
+                  { color: colorScheme === "dark" ? "white" : " black" },
+                ]}
+              >
+                Order ID
+                 </Text>
+                 <TextInput />
+            </View>
+            <View style={styles.orderid}>
+              <Text
+                style={[
+                  styles.ordertext,
+                  { color: colorScheme === "dark" ? "white" : " black" },
+                ]}
+              >
+                Order ID
+                 </Text>
+                 <TextInput />
+            </View>
           </View>
         </View>
       </View>
@@ -177,37 +157,31 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     paddingTop: 28,
   },
-  filterContainer: {
+  textorder: {
+    padding: 16,
+    // fontSize: 12,
+  },
+  orderContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 10,
+    alignItems: "center",
+    gap: 8,
+    // fontSize: 12,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    margin: 10,
-  },
-  button: {
+  orderid: {
     display: "flex",
-    flexDirection: "row",
-    gap: 2,
-    backgroundColor: "#7E0201",
-    padding: 5,
-    borderRadius: 5,
-    width: 100,
-    height: 34,
-    textAlign: "center",
-    margin: 10,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
   },
-  picker: {
-    height: 54,
-    width: "50%",
-    margin: 10,
-    fontSize: 8,
-    // borderRadius: 8,
-    // padding: 0,
+  ordertext: {
+    fontSize: 12,
   },
+  ordertextinput: {
+    padding: 2,
+  }
 });
 
-export default Profile;
+export default TrackOrder;

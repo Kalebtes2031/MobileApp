@@ -1,13 +1,53 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
-import React from "react";
+import React, { useState } from "react";
 
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
+{
+  /* <AntDesign name="shoppingcart" size={24} color="black" /> */
+}
+{
+  /* /> */
+}
 const Card = ({ image, name, price, category }) => {
+  const [isFavorited, setIsFavorited] = useState(false);
+
   const colorScheme = useColorScheme();
+
+  const toggleFavorite = () => {
+    setIsFavorited(!isFavorited);
+  };
+
+  const handleFavorite = () => {
+    alert("Added to favorites");
+  };
+
   return (
     <View style={styles.card}>
-      <Image source={image} style={styles.image} className="object-top" />
+      {/* Image Container with Icons */}
+      <View style={styles.imageContainer}>
+        <Image source={image} style={styles.image} className="object-cover object-top"/>
+
+        {/* Add to Cart Icon (Top Left) */}
+        <TouchableOpacity
+          style={styles.cartIcon}
+          onPress={() => alert("Added to cart")}
+        >
+          <AntDesign name="shoppingcart" size={24} color="black" />
+        </TouchableOpacity>
+
+        {/* Favorite Icon (Bottom Right) */}
+        <TouchableOpacity style={styles.favoriteIcon} onPress={toggleFavorite}>
+          <MaterialIcons
+            name={isFavorited ? "favorite" : "favorite-border"}
+            size={24}
+            color={isFavorited ? "#7E0201" : "#7E0201"}
+          />
+        </TouchableOpacity>
+      </View>
+      {/* <Image source={image} style={styles.image} className="object-top" /> */}
       <Text
         className="font-secondary"
         style={[
@@ -68,14 +108,16 @@ const CardList = ({ name }) => {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={[
-          styles.title,
-          { color: colorScheme === "dark" ? "#fff" : "#7E0201" },
-        ]}
-      >
-        {name}
-      </Text>
+      {name && (
+        <Text
+          style={[
+            styles.title,
+            { color: colorScheme === "dark" ? "#fff" : "#7E0201" },
+          ]}
+        >
+          {name}
+        </Text>
+      )}
       <View style={styles.row}>
         {cards.map((card, index) => (
           <Card
@@ -117,14 +159,39 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  imageContainer: {
+    width: "100%",
+    height: 155,
+    marginBottom: 1,
+    borderRadius: 10,
+    position: "relative",
+  },
   image: {
     width: "100%",
-    height: 145,
-    marginBottom: 1,
-    objectFit: "top",
-    objectFit: "cover",
+    height: "100%",
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
+    // objectFit: "cover",
+    // objectFit: "top",
+
+  },
+  cartIcon: {
+    position: "absolute",
+    top: 5,
+    left: 5,
+    zIndex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 15,
+    padding: 4,
+  },
+  favoriteIcon: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    zIndex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 15,
+    padding: 4,
   },
   name: {
     fontSize: 14,

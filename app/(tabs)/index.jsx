@@ -11,16 +11,30 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
-import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
-import { useNavigation } from '@react-navigation/native';
 
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
+import { useNavigation } from "@react-navigation/native";
 
 // Get device width for the scroll item (or use DEVICE_WIDTH for full-screen width)
 const { width: DEVICE_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 375; // Adjust as needed
 
 export default function HomeScreen() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -63,11 +77,16 @@ export default function HomeScreen() {
       });
     }
   }, [currentIndex]);
-let most= "Most Popular";
-let newest= "Newest Products";
+  let most = "Most Popular";
+  let newest = "Newest Products";
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      style={styles.container}
+    >
       {/* Header & SearchBar*/}
       <View style={styles.headerContainer}>
         <Header />
@@ -98,7 +117,7 @@ let newest= "Newest Products";
 
       {/* Most popular Card lists */}
       <View className="mb-12">
-        <CardList name={most}/>
+        <CardList name={most} />
       </View>
 
       {/* Image Background Section */}
@@ -132,7 +151,7 @@ let newest= "Newest Products";
 
       {/* Most popular Card lists */}
       <View className="mb-12">
-        <CardList name={newest}/>
+        <CardList name={newest} />
       </View>
 
       {/* Image Background Section */}
@@ -180,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
-    gap: 80,
+    gap: 12,
   },
   scrollView: {
     paddingVertical: 20,
@@ -233,7 +252,7 @@ const styles = StyleSheet.create({
   exploreImage: {
     width: 200,
     height: 300,
-    
+
     // borderWidth: 1,
     // borderColor: "#7E0201",
   },

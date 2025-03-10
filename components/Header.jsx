@@ -173,9 +173,9 @@ const styles = StyleSheet.create({
     padding: 10,
     height: 70,
     width: "100%",
-    position: "absolute",
-    top: 0,
-    zIndex: 1000,
+    // position: "absolute",
+    // top: 0,
+    // zIndex: 1000,
   },
   logo: {
     width: 95,
