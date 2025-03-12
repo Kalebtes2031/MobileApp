@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
+  TextInput,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -27,6 +28,8 @@ const TrackOrder = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
+  const [text, onChangeText] = React.useState("Useless Text");
+  const [number, onChangeNumber] = React.useState("");
 
   const colorScheme = useColorScheme();
   const [selectedValue, setSelectedValue] = useState("option1");
@@ -76,6 +79,7 @@ const TrackOrder = () => {
               receipt and in the confirmation email you should have received.
             </Text>
           </View>
+          {/* order id and billing email */}
           <View style={styles.orderContainer}>
             <View style={styles.orderid}>
               <Text
@@ -85,8 +89,21 @@ const TrackOrder = () => {
                 ]}
               >
                 Order ID
-                 </Text>
-                 <TextInput />
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  // { borderColor: colorScheme === "dark" ? "white" : " black" },
+                  { color: colorScheme === "dark" ? "white" : " black" },
+                ]}
+                // onChangeText={onChangeText}
+                // value={text}
+                placeholder="Found in your order "
+                keyboardType="numeric"
+                placeholderTextColor={
+                  colorScheme === "dark" ? "white" : "gray"
+                }
+              />
             </View>
             <View style={styles.orderid}>
               <Text
@@ -95,11 +112,32 @@ const TrackOrder = () => {
                   { color: colorScheme === "dark" ? "white" : " black" },
                 ]}
               >
-                Order ID
-                 </Text>
-                 <TextInput />
+                Billing Email
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  // { borderColor: colorScheme === "dark" ? "white" : "" },
+                  { color: colorScheme === "dark" ? "white" : " black" },
+                ]}
+                // onChangeText={onChangeNumber}
+                // value={number}
+                placeholder="Email you used during"
+                keyboardType="numeric"
+                placeholderTextColor={
+                  colorScheme === "dark" ? "white" : "gray"
+                }
+              />
             </View>
           </View>
+
+          <Pressable
+            style={styles.button}
+            onPress={console.log("I was pressed")}
+          >
+            {/* <AntDesign name="filter" size={24} color="white" /> */}
+            <Text className="text-white">Track</Text>
+          </Pressable>
         </View>
       </View>
     </ScrollView>
@@ -167,21 +205,43 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 8,
+    padding: 10,
     // fontSize: 12,
   },
   orderid: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "start",
     gap: 8,
+    padding: 10,
   },
   ordertext: {
     fontSize: 12,
   },
   ordertextinput: {
     padding: 2,
-  }
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 5,
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignContent: "center",
+    gap: 2,
+    backgroundColor: "#7E0201",
+    padding: 5,
+    borderRadius: 18,
+    width: 80,
+    height: 35,
+    textAlign: "center",
+    marginLeft: 25,
+  },
 });
 
 export default TrackOrder;
