@@ -1,128 +1,122 @@
-import Header from "@/components/Header";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  Image,
-  Button,
   ImageBackground,
   Pressable,
   ScrollView,
+  RefreshControl,
 } from "react-native";
+import Header from "@/components/Header";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Picker } from "@react-native-picker/picker";
-import CardList from "@/components/Card";
-import { RefreshControl } from "react-native";
+import Card from "@/components/Card";
 import SearchComp from "@/components/SearchComp";
-
-const products = [
-  {
-    id: "1",
-    name: "Product 1",
-    price: "$10",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: "2",
-    name: "Product 2",
-    price: "$20",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: "3",
-    name: "Product 3",
-    price: "$30",
-    image: "https://via.placeholder.com/150",
-  },
-];
-
-const ProductItem = ({ item }) => (
-  <View style={styles.productItem}>
-    <Image source={{ uri: item.image }} style={styles.productImage} />
-    <Text style={styles.productName}>{item.name}</Text>
-    <Text style={styles.productPrice}>{item.price}</Text>
-    <Button title="Add to Cart" onPress={() => alert("Added to cart")} />
-  </View>
-);
+import { fetchProducts } from "@/hooks/useFetch";
 
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedValue, setSelectedValue] = useState("option1");
+  const colorScheme = useColorScheme();
 
-  const onRefresh = React.useCallback(() => {
+  const loadProducts = async () => {
+    try {
+      const data = await fetchProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
+    loadProducts();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
-  const colorScheme = useColorScheme();
-  const [selectedValue, setSelectedValue] = useState("option1");
-  let newest = "";
-  return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      style={styles.container}
-    >
-      <View style={styles.container}>
-        {/* Header Section */}
-        <View style={styles.headerContainer}>
-          <Header />
+  useEffect(() => {
+    loadProducts();
+  }, []);
+  const ListHeader = () => (
+    <View style={styles.container}>
+      {/* Header Section */}
+      <View style={styles.headerContainer}>
+        <Header />
+      </View>
+      {/* Content Area */}
+      <View style={styles.contentContainer}>
+        {/* Image Background Section */}
+        <View style={styles.imageContainer}>
+          <ImageBackground
+            source={require("@/assets/images/headerhabeshakemis.png")}
+            style={styles.imageBackground}
+          >
+            <View style={styles.overlay} />
+            <View style={styles.textContainer}>
+              <Text style={[styles.text, styles.text1]}>Shop</Text>
+              <Text style={styles.text}>Home {">>"} Shop </Text>
+            </View>
+          </ImageBackground>
         </View>
-
-        {/* Content Area */}
-        <View style={styles.contentContainer}>
-          {/* Image Background Section */}
-          <View style={styles.imageContainer}>
-            <ImageBackground
-              source={require("@/assets/images/headerhabeshakemis.png")}
-              style={styles.imageBackground}
-            >
-              <View style={styles.overlay} />
-              <View style={styles.textContainer}>
-                <Text style={[styles.text, styles.text1]}>Shop</Text>
-                <Text style={styles.text}>Home {">>"} Shop </Text>
-              </View>
-            </ImageBackground>
-          </View>
-          <View>
-            <SearchComp/>
-          </View>
-
-          {/* filter container */}
-          <View style={styles.filterContainer}>
-            <Pressable
-              style={styles.button}
-              onPress={console.log("I was pressed")}
-            >
-              <AntDesign name="filter" size={24} color="white" />
-              <Text className="text-white">Filter</Text>
-            </Pressable>
-            <Picker
-              selectedValue={selectedValue}
-              onValueChange={(itemValue) => setSelectedValue(itemValue)}
-              style={[
-                styles.picker,
-                { backgroundColor: colorScheme === "dark" ? "#fff" : "#fff" },
-                { color: colorScheme === "dark" ? "#000" : "#333" },
-              ]}
-              className="border border-black"
-            >
-              <Picker.Item label="Default sorting" value="option1" />
-              <Picker.Item label="Sort by popularity" value="option2" />
-              <Picker.Item label="Sort by latest" value="option3" />
-            </Picker>
-          </View>
-          <View className="mb-12">
-            <CardList name={newest} />
-          </View>
+        <SearchComp />
+        {/* Filter Container */}
+        <View style={styles.filterContainer}>
+          <Pressable
+            style={styles.button}
+            onPress={() => console.log("Filter pressed")}
+          >
+            <AntDesign name="filter" size={24} color="white" />
+            <Text style={{ color: "white" }}>Filter</Text>
+          </Pressable>
+          <Picker
+            selectedValue={selectedValue}
+            onValueChange={(itemValue) => setSelectedValue(itemValue)}
+            style={[
+              styles.picker,
+              {
+                backgroundColor: colorScheme === "dark" ? "#fff" : "#fff",
+                color: colorScheme === "dark" ? "#000" : "#333",
+              },
+            ]}
+          >
+            <Picker.Item label="Default sorting" value="option1" />
+            <Picker.Item label="Sort by popularity" value="option2" />
+            <Picker.Item label="Sort by latest" value="option3" />
+          </Picker>
         </View>
       </View>
-    </ScrollView>
+    </View>
+  );
+  return (
+    <FlatList
+      data={products}
+      renderItem={({ item }) => (
+        <View style={{ width: '48%'}}>
+          <Card product={item} /> 
+        </View>
+      )}
+      
+      keyExtractor={(item) => item.id.toString()}
+      numColumns={2} // This displays 2 cards per row
+      columnWrapperStyle={{
+        justifyContent: "space-between",
+        gap: 10,
+        marginBottom: 10,
+      }}
+      ListHeaderComponent={ListHeader}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      contentContainerStyle={styles.flatListContainer}
+    />
   );
 };
 
@@ -133,15 +127,14 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     zIndex: 1000,
-    // Ensure Header has explicit height matching your header's actual height
-    height: 70, // Match your Header component's height
+    height: 70,
   },
   contentContainer: {
     flex: 1,
-    marginTop: 0, // Remove default margins
+    marginTop: 0,
   },
   imageContainer: {
-    height: 180, // Match ImageBackground height
+    height: 180,
     marginBottom: 10,
   },
   imageBackground: {
@@ -169,7 +162,6 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: 32,
-    fontWeight: "extrabold",
     color: "#FFFFFF",
     textAlign: "center",
     letterSpacing: 2,
@@ -178,26 +170,19 @@ const styles = StyleSheet.create({
     paddingTop: 28,
   },
   filterContainer: {
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    margin: 10,
-  },
   button: {
-    display: "flex",
     flexDirection: "row",
-    gap: 2,
     backgroundColor: "#7E0201",
     padding: 5,
     borderRadius: 5,
     width: 100,
     height: 34,
-    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
     margin: 10,
   },
   picker: {
@@ -205,8 +190,10 @@ const styles = StyleSheet.create({
     width: "50%",
     margin: 10,
     fontSize: 8,
-    // borderRadius: 8,
-    // padding: 0,
+  },
+  flatListContainer: {
+    padding: 10,
+    gap:2,
   },
 });
 

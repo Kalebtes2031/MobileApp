@@ -2,7 +2,7 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
 // const baseUrl = "https://malhibnewbackend.activetechet.com/";
-const baseUrl = "http://localhost:8000/";
+const baseUrl = "http://192.168.100.51:8000/";
 
 const auth = axios.create({
     baseURL: baseUrl,

@@ -1,4 +1,4 @@
-import CardList from "@/components/Card";
+import Card from "@/components/Card";
 import Header from "@/components/Header";
 import SearchComp from "@/components/SearchComp";
 import React, { useState, useEffect, useRef } from "react";
@@ -12,6 +12,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   RefreshControl,
+  FlatList,
 } from "react-native";
 
 import {
@@ -20,13 +21,52 @@ import {
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
 import { useNavigation } from "@react-navigation/native";
+import { fetchNewImages, fetchPopularProducts } from "@/hooks/useFetch";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 // Get device width for the scroll item (or use DEVICE_WIDTH for full-screen width)
 const { width: DEVICE_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 375; // Adjust as needed
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const [veryPopular, setVeryPopular] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [newImages, setNewImages] = useState([]);
+
+  const handleCartClick = (id) => {
+    // navigate(`/shop/${id}`); // Redirect to /shop/:id
+    console.log("Cart clicked!", id);
+  };
+
+
+  const newestImages = async () => {
+    try {
+      const data = await fetchNewImages();
+      const firstFourNewestImages = data.slice(0, 4);
+      // console.log('newest images: ', firstFourNewestImages)
+      setNewImages(firstFourNewestImages);
+    } catch (error) {
+      console.error("Error fetching new images", error);
+    }
+  };
+
+  const newPopular = async () => {
+    try {
+      const data = await fetchPopularProducts();
+      // console.log("all data: ", data)
+      const firstFourPopularImages = data.slice(0, 4);
+      setVeryPopular(firstFourPopularImages);
+      console.log("first four:", firstFourPopularImages);
+    } catch (error) {
+      console.error("Error fetching new popular images", error);
+    }
+  };
+
+  useEffect(() => {
+    newestImages();
+    newPopular();
+  }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -115,9 +155,26 @@ export default function HomeScreen() {
         ))}
       </ScrollView>
 
-      {/* Most popular Card lists */}
-      <View className="mb-12">
-        <CardList name={most} />
+      {/* Most Newest Card lists */}
+      <Text style={{ 
+        color: colorScheme === "dark" ? "white" : "black" ,
+        padding: 16,
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        }}>
+        Newest Products
+      </Text>
+      <View style={styles.popularContainer}>
+        {newImages.length > 0 ? (
+          newImages.map((product, index) => (
+            <View key={product.id || index} style={styles.cardWrapper}>
+              <Card product={product} />
+            </View>
+          ))
+        ) : (
+          <Text style={styles.loadingText}>Loading popular products...</Text>
+        )}
       </View>
 
       {/* Image Background Section */}
@@ -150,8 +207,25 @@ export default function HomeScreen() {
       </ImageBackground>
 
       {/* Most popular Card lists */}
-      <View className="mb-12">
-        <CardList name={newest} />
+      <Text style={{ 
+        color: colorScheme === "dark" ? "white" : "black" ,
+        padding: 16,
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        }}>
+        Most Popular
+      </Text>
+      <View style={styles.popularContainer}>
+        {veryPopular.length > 0 ? (
+          veryPopular.map((product, index) => (
+            <View key={product.id || index} style={styles.cardWrapper}>
+              <Card product={product} />
+            </View>
+          ))
+        ) : (
+          <Text style={styles.loadingText}>Loading popular products...</Text>
+        )}
       </View>
 
       {/* Image Background Section */}
@@ -192,6 +266,23 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  popularContainer: {
+    marginBottom: 36,
+    padding: 16,
+    flexDirection: "row",
+    flexWrap: "wrap", // Allows wrapping to the next row
+    justifyContent: "space-between", // Adds spacing between cards
+  },
+  cardWrapper: {
+    // backgroundColor: "#fff",
+    width: "48%",
+    marginBottom: 16, // Adds spacing between rows
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#555",
   },
   headerContainer: {
     // Space between Header and SearchComp
