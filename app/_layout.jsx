@@ -17,6 +17,8 @@ import { StyleSheet } from "react-native";
 
 import Header from "@/components/Header"; // Import the Header component
 import SearchComp from "@/components/SearchComp";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import GlobalProvider from "@/context/GlobalProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,11 +48,16 @@ export default function RootLayout() {
           ]}
         >
           {/* <Header /> */}
-          
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          <ErrorBoundary>
+            <GlobalProvider>
+              <Stack>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </GlobalProvider>
+          </ErrorBoundary>
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
         </SafeAreaView>
       </ThemeProvider>

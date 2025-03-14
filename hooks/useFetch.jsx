@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+// hooks/useFetch.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // const baseUrl = "https://malhibnewbackend.activetechet.com/";
 const baseUrl = "http://192.168.100.51:8000/";
@@ -32,10 +35,19 @@ export const setTokens = (accessToken, refreshToken) => {
 };
 
 //it's work is just to remove tokens from the local storage
-export const removeTokens = () => {
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-};
+// export const removeTokens = () => {
+//     sessionStorage.removeItem("accessToken");
+//     sessionStorage.removeItem("refreshToken");
+// };
+  // Remove tokens
+  export const removeTokens = async () => {
+    try {
+      await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
+    } catch (error) {
+      console.error("Error removing tokens:", error);
+    }
+  };
+
 
 export const CREATE_NEW_USER = async (credentials) => {
     console.log('am i a problem:',credentials);
@@ -114,9 +126,19 @@ export const fetchNewImages = async () => {
 };
 
 // get access token
-export const getAccessToken = () => {
-    return sessionStorage.getItem("accessToken");
-};
+// export const getAccessToken = () => {
+//     return sessionStorage.getItem("accessToken");
+// };
+// Get access token
+export const getAccessToken = async () => {
+    try {
+      return await AsyncStorage.getItem("accessToken");
+    } catch (error) {
+      console.error("Error getting token:", error);
+      return null;
+    }
+  };
+  
 
 export const whoami = async () => {
     const accesstoken = sessionStorage.getItem("accessToken");
