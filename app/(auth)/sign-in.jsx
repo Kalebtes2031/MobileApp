@@ -1,89 +1,68 @@
 import { useState } from "react";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-// import { images } from "../../constants";
+import { View, Text, ScrollView, Dimensions, Alert, Image, StyleSheet } from "react-native";
 import FormField from "../../components/FormField";
-import CustomBotton from "../../components/CustomButton";
-// import { getCurrentUser, signIn } from "../../lib/appwrite";
+import CustomButton from "../../components/CustomButton";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
+import { useRouter } from "expo-router";
+import { GET_AUTH } from "@/hooks/useFetch";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = () => {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const { setUser, setIsLogged } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // const submit = async () => {
-  //   if (form.email === "" || form.password === "") {
-  //     Alert.alert("Error", "Please fill in all fields");
-  //   }
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
 
-  //   setIsSubmitting(true);
-  //   try {
-  //      await signIn(form.email, form.password);
-  //     const result = await getCurrentUser();
-  //     setUser(result);
-  //     setIsLogged(true);
+    setIsSubmitting(true);
+    try {
+      const result = await GET_AUTH(form);
 
-  //     // Alert.alert("Success", "User signed in successfully");
-  //     router.replace("/home");
-  //   } catch (error) {
-  //     Alert.alert("Error:(", error.message);
-  //     console.error("this is the error")
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
+      // Store the token in AsyncStorage
+      await AsyncStorage.setItem("authToken", result.access);
+
+      // Update global context
+      setUser({ email: form.email });
+      setIsLogged(true);
+
+      Alert.alert("Success", "User signed in successfully");
+      router.replace("/(tabs)/home");
+    } catch (error) {
+      Alert.alert("Error", "Invalid credentials or server error");
+      console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <SafeAreaView
-      style={{
-        height: "100%",
-        backgroundColor:  colorScheme === "dark" ? "#000" : "#fff",
-      }}
-      // className="bg-primary"
+      style={[
+        styles.container,
+        { backgroundColor: colorScheme === "dark" ? "#1a1a1a" : "#fff" },
+      ]}
     >
       <ScrollView>
-        <View
-          // className="w-full flex justify-center min-h-[85vh] px-4 my-6"
-          style={{
-            // minHeight: Dimensions.get("window").height - 100,
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 20,
-            marginVertical: 20,
-            minHeight: "85vh",
-          }}
-        >
+        <View style={styles.content}>
           <Image
             source={require("@/assets/images/malhiblogo.png")}
             resizeMode="contain"
-            // className="w-[115px] h-[34px]"
-            style={{
-              width: 150,
-              height: 104,
-            }}
+            style={styles.logo}
           />
 
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 30,
-              fontWeight: "semibold",
-              color: colorScheme === "dark" ? "#fff" : "black",
-              marginTop: 20,
-              fontFamily: "Poppins-SemiBold",
-            }}
-            // className="text-2xl font-semibold text-white mt-10 font-psemibold"
-          >
+          <Text style={[styles.title, { color: colorScheme === "dark" ? "#fff" : "#000" }]}>
             Log in to Yason
           </Text>
 
@@ -100,44 +79,25 @@ const SignIn = () => {
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
+            secureTextEntry={true}
           />
-          <CustomBotton
+
+          <CustomButton
             title="Sign In"
-            // handlePress={submit}
+            handlePress={submit}
             containerStyles="mt-7 w-full"
             isLoading={isSubmitting}
           />
 
-          <View 
-          // className="flex justify-center pt-5 flex-row gap-2"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              paddingTop: 20,
-              gap: 10,
-            }}
-            >
-            <Text 
-            style={{
-              fontSize: 20,
-              color: colorScheme === "dark" ? "#fff" : "black",
-              fontFamily: "Poppins-Regular",
-            }}
-            // className="text-lg text-gray-100 font-pregular"
-            >
+          <View style={styles.footer}>
+            <Text style={[styles.footerText, { color: colorScheme === "dark" ? "#fff" : "#000" }]}>
               Don't have an account?
             </Text>
             <Link
               href="/sign-up"
-              style={{
-                fontSize: 20,
-                color: "#7E0201",
-                fontFamily: "Poppins-SemiBold",
-              }}
-              className="text-lg font-psemibold text-secondary"
+              style={styles.link}
             >
-              Signup
+              Sign Up
             </Link>
           </View>
         </View>
@@ -145,5 +105,51 @@ const SignIn = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    height: "100%",
+  },
+  content: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginVertical: 20,
+    minHeight: Dimensions.get("window").height - 100,
+  },
+  logo: {
+    width: 150,
+    height: 104,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    marginTop: 20,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 6,
+    fontFamily: "Poppins-SemiBold",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingTop: 20,
+    gap: 10,
+  },
+  footerText: {
+    fontSize: 18,
+    fontFamily: "Poppins-Regular",
+  },
+  link: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#7E0201",
+    fontFamily: "Poppins-SemiBold",
+    textDecorationLine: "underline",
+  },
+});
 
 export default SignIn;

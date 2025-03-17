@@ -198,7 +198,7 @@ export default function HomeScreen() {
             Explore our Family Package Collection now!
           </Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("profile")}
+            onPress={() => navigation.navigate("shop")}
             style={styles.button}
           >
             <Text style={styles.buttonText}>VIEW COLLECTION</Text>

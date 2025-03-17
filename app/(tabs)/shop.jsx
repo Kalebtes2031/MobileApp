@@ -17,7 +17,7 @@ import Card from "@/components/Card";
 import SearchComp from "@/components/SearchComp";
 import { fetchProducts } from "@/hooks/useFetch";
 
-const Profile = () => {
+const Shop = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,6 +111,7 @@ const Profile = () => {
         justifyContent: "space-between",
         gap: 10,
         marginBottom: 10,
+        paddingHorizontal: 16,
       }}
       ListHeaderComponent={ListHeader}
       onRefresh={onRefresh}
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+    padding: 0,
   },
   headerContainer: {
     zIndex: 1000,
@@ -192,9 +194,9 @@ const styles = StyleSheet.create({
     fontSize: 8,
   },
   flatListContainer: {
-    padding: 10,
+    // padding: 10,
     gap:2,
   },
 });
 
-export default Profile;
+export default Shop;

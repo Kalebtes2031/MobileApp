@@ -79,7 +79,11 @@ const SignUp = () => {
             fontWeight: "semibold",
             color: colorScheme === "dark" ? "#fff" : "black",
             marginTop: 20,
+            fontWeight: '700',
             fontFamily: "Poppins-SemiBold",
+            textShadowColor: "rgba(0, 0, 0, 0.3)",
+            textShadowOffset: { width: 0, height: 3 },
+            textShadowRadius: 6,
           }}
           // className="text-2xl font-semibold text-white mt-10 font-psemibold"
           >

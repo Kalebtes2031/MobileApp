@@ -18,7 +18,7 @@ const FormField = ({
     <View style={{ gap: 2 }} className={` ${otherStyles}`}>
       <Text
         style={{
-          color: colorScheme === "dark" ? "#fff" : "black",
+          color: colorScheme === "dark" ? "#fff" : "#7E0201",
           fontSize: 20,
           fontWeight: "semibold",
         }}
@@ -31,7 +31,8 @@ const FormField = ({
       style={{
         backgroundColor: "white",
         borderRadius: 10,
-        borderWidth: 2,
+        borderWidth: 1,
+        borderColor: "gray",
         width: '100%',
         height: 50,
         paddingHorzontal: 4,

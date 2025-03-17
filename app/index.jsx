@@ -19,27 +19,30 @@ const Welcome = () => {
   // }, [loading, isLogged, router]);
   if (!loading && isLogged) return <Redirect href="/home" />;
     return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView style={{flex: 1, backgroundColor: "white"}} className="bg-primary h-full">
       <ScrollView
         contentContainerStyle={{
           height: "100%",
         }}
       >
-        <View className="w-full flex justify-center items-center h-full px-4">
+        <View 
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 40 }}
+        // className="w-full flex gap-y-12 justify-center items-center h-full px-4"
+        >
           <Image
             source={require("@/assets/images/malhiblogo.png")}
-            className="w-[130px] h-[84px]"
+            style={{ width: 150, height: 90, marginBottom: 50 }}
             resizeMode="contain"
           />
 
           <Image
-            source={require("@/assets/images/trackdelivery1.png")}
-            style={{ width: 580, height: 298 }}
-            className="max-w-[380px] w-full h-[298px]"
+            source={require("@/assets/images/trackdelivery5.jpg")}
+            style={{ width: 680, height: 298 }}
+            className="w-full h-[298px]"
             resizeMode="contain"
           />
 
-          <View className="relative mt-5">
+          <View className="relative mt-5" style={{marginBottom: 32}}>
             <Text className="text-3xl font-bold text-center" style={{ color: colorScheme === "dark" ? "#fff" : "#000" }}>
               Tracking Deliveries {"\n"}
               in Real-time with{" "}
@@ -53,10 +56,10 @@ const Welcome = () => {
             />
           </View>
 
-          <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
+          {/* <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
             Where Creativity Meets Innovation: Embark on a Journey of Limitless
             Exploration with Kabth
-          </Text>
+          </Text> */}
           <CustomButton
             title="Continue with Email"
             handlePress={() => router.push("/sign-in")}

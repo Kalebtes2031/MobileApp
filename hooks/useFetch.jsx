@@ -25,10 +25,24 @@ export const ActivateUser = async (c) => {
 
     return res.data;
 };
-export const GET_AUTH = async (credentials) => {
-    const response = await auth.post("auth/jwt/create/", credentials);
-    return response.data;
-};
+// export const GET_AUTH = async (credentials) => {
+//     const response = await auth.post("auth/jwt/create/", credentials);
+//     return response.data;
+// };
+export const GET_AUTH = async (email, password) => {
+    try {
+      const response = await auth.post("auth/jwt/create/", {
+        email,
+        password,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.detail || "An error occurred");
+    }
+  };
+  
+
+
 export const setTokens = (accessToken, refreshToken) => {
     sessionStorage.setItem("accessToken", accessToken);
     sessionStorage.setItem("refreshToken", refreshToken);

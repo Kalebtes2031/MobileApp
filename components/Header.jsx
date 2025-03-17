@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedView } from "./ThemedView";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 
 const Header = () => {
   const navigation = useNavigation();
@@ -125,13 +126,13 @@ const Header = () => {
           />
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("index")}
+            onPress={() => navigation.navigate("home")}
           >
             <Text style={styles.linkText}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("profile")}
+            onPress={() => navigation.navigate("shop")}
           >
             <Text style={styles.linkText}>Shop</Text>
           </TouchableOpacity>
@@ -149,13 +150,13 @@ const Header = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("profile")}
+            onPress={() => navigation.navigate("home")}
           >
             <Text style={styles.linkText}>Contact Us</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => router.push("(auth)/sign-in")}
           >
             <Text style={styles.linkText}>Login / Register</Text>
           </TouchableOpacity>
