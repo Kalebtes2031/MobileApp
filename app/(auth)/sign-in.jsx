@@ -1,46 +1,72 @@
 import { useState } from "react";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Alert,
+  Image,
+  StyleSheet,
+} from "react-native";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useRouter } from "expo-router";
 import { GET_AUTH } from "@/hooks/useFetch";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 const SignIn = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const { setUser, setIsLogged } = useGlobalContext();
   const [form, setForm] = useState({
-    email: "",
+    // email: "",
+    username: "",
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
-    if (!form.email || !form.password) {
-      Alert.alert("Error", "Please fill in all fields");
+    if (!form.username || !form.password) {
+      Toast.show({
+        type: 'info',
+        text1: "Please fill in all fields"
+    })
+      // Alert.alert("Error", "Please fill in all fields");
       return;
     }
-
+    console.log( 'username is : ', form)
+    console.log( 'password is : ', form.password)
     setIsSubmitting(true);
     try {
       const result = await GET_AUTH(form);
 
       // Store the token in AsyncStorage
-      await AsyncStorage.setItem("authToken", result.access);
+      await AsyncStorage.setItem("accessToken", result.access);
 
+      // await AsyncStorage.setItem("user", form.username);
+      // const users = await AsyncStorage.getItem("user")
       // Update global context
-      setUser({ email: form.email });
+      setUser({ username: form.username });
       setIsLogged(true);
-
-      Alert.alert("Success", "User signed in successfully");
+      
+      Toast.show({
+        type: 'success',
+        text1: "Your signed in successfully",
+    })
+      // Alert.alert("Success", "User signed in successfully");
       router.replace("/(tabs)/home");
     } catch (error) {
-      Alert.alert("Error", "Invalid credentials or server error");
+      Toast.show({
+        type: 'error',
+        text1: "Error",
+        text2: "Invalid credentials or server error"
+    })
+      // Alert.alert("Error", "Invalid credentials or server error");
       console.error("Login error:", error);
     } finally {
       setIsSubmitting(false);
@@ -57,46 +83,63 @@ const SignIn = () => {
       <ScrollView>
         <View style={styles.content}>
           <Image
-            source={require("@/assets/images/malhiblogo.png")}
+            source={
+              colorScheme === "dark"
+                ? require("@/assets/images/malhibfooterlogo.png")
+                : require("@/assets/images/malhiblogo.png")
+            }
             resizeMode="contain"
             style={styles.logo}
           />
 
-          <Text style={[styles.title, { color: colorScheme === "dark" ? "#fff" : "#000" }]}>
+          <Text
+            style={[
+              styles.title,
+              { color: colorScheme === "dark" ? "#fff" : "#000" },
+            ]}
+          >
             Log in to Yason
           </Text>
 
-          <FormField
+          {/* <FormField
             title="Email"
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
             keyboardType="email-address"
+          /> */}
+          <FormField
+            title="Username"
+            value={form.username}
+            handleChangeText={(e) => setForm({ ...form, username: e })}
+            otherStyles="mt-10"
           />
-
           <FormField
             title="Password"
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
-            secureTextEntry={true}
+            // secureTextEntry={true}
           />
 
           <CustomButton
             title="Sign In"
             handlePress={submit}
+            // handlePress={() => router.push("/(tabs)/home")}
             containerStyles="mt-7 w-full"
             isLoading={isSubmitting}
           />
 
           <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: colorScheme === "dark" ? "#fff" : "#000" }]}>
+            <Text
+              style={[
+                styles.footerText,
+                { color: colorScheme === "dark" ? "#fff" : "#000" },
+              ]}
+            >
               Don't have an account?
             </Text>
-            <Link
-              href="/sign-up"
-              style={styles.link}
-            >
+            <Link href="/sign-up" style={styles.link}>
               Sign Up
             </Link>
           </View>

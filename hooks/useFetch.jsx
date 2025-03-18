@@ -2,6 +2,7 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 // hooks/useFetch.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from "expo-router";
 
 
 // const baseUrl = "https://malhibnewbackend.activetechet.com/";
@@ -29,12 +30,9 @@ export const ActivateUser = async (c) => {
 //     const response = await auth.post("auth/jwt/create/", credentials);
 //     return response.data;
 // };
-export const GET_AUTH = async (email, password) => {
+export const GET_AUTH = async (form) => {
     try {
-      const response = await auth.post("auth/jwt/create/", {
-        email,
-        password,
-      });
+      const response = await auth.post("auth/jwt/create/", form);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.detail || "An error occurred");
@@ -54,9 +52,18 @@ export const setTokens = (accessToken, refreshToken) => {
 //     sessionStorage.removeItem("refreshToken");
 // };
   // Remove tokens
+  export const getAccessToken = async () => {
+    try {
+      return await AsyncStorage.getItem("accessToken");
+    } catch (error) {
+      console.error("Error getting token:", error);
+      return null;
+    }
+  };
+  
   export const removeTokens = async () => {
     try {
-      await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
+      await AsyncStorage.multiRemove(["accessToken", "refreshToken",]);
     } catch (error) {
       console.error("Error removing tokens:", error);
     }
@@ -78,8 +85,8 @@ export const RESET_USER_PASSWORD = async (email) => {
     return response.data;
 };
 export const redirectToLogin = () => {
-    const navigation = useNavigation();
-    navigation.navigate("Login");
+    const navigation = useRouter();
+    navigation.push("/(auth)/sign-in");
 };
 
 // Fetch all images from the gallery
@@ -144,15 +151,7 @@ export const fetchNewImages = async () => {
 //     return sessionStorage.getItem("accessToken");
 // };
 // Get access token
-export const getAccessToken = async () => {
-    try {
-      return await AsyncStorage.getItem("accessToken");
-    } catch (error) {
-      console.error("Error getting token:", error);
-      return null;
-    }
-  };
-  
+
 
 export const whoami = async () => {
     const accesstoken = sessionStorage.getItem("accessToken");
@@ -331,7 +330,7 @@ auth.interceptors.response.use(
 pay.interceptors.request.use(
     async (config) => {
         // Attach the token for authorized routes
-        const accessToken = getAccessToken();
+        const accessToken = await getAccessToken();
         if (!accessToken) {
             console.log("No access token, redirecting to login");
             redirectToLogin(); // Redirect to login if no token
@@ -374,7 +373,7 @@ api.interceptors.request.use(
         }
 
         // Attach the token for authorized routes
-        const accessToken = getAccessToken();
+        const accessToken = await getAccessToken();
         if (!accessToken) {
             console.log("No access token, redirecting to login");
             redirectToLogin(); // Redirect to login if no token

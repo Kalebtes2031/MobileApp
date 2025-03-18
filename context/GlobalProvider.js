@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getAccessToken, removeTokens } from "@/hooks/useFetch";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -14,11 +15,11 @@ const GlobalProvider = ({ children }) => {
       try {
         const token = await getAccessToken();
         console.log("Retrieved token:", token); // Debug log
-
+        // const users = await AsyncStorage.getItem("user");
+        console.log("Retrieved user:", user); // Debug log
         if (token) {
           setIsLogged(true);
-          // Add actual user data fetching here if needed
-          setUser({ id: "demo-user" }); // Temporary dummy data
+          setUser(user);
         } else {
           setIsLogged(false);
           setUser(null);

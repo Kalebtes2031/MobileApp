@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Platform } from "react-native";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
+import { useGlobalContext } from "@/context/GlobalProvider"; // Ensure this is your context provider
 
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
@@ -11,6 +13,16 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { isLogged } = useGlobalContext(); 
+  const router = useRouter();
+
+
+  // Redirect to the sign-in page if not logged in
+  useEffect(() => {
+    if (!isLogged) {
+      router.replace("/(auth)/sign-in");
+    }
+  }, [isLogged]);
 
   return (
     <Tabs
@@ -59,7 +71,7 @@ export default function TabLayout() {
         options={{
           title: "Orders",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+            <MaterialIcons name="work-history" size={28} color={color} />
           ),
         }}
       />

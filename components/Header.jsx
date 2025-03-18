@@ -15,12 +15,14 @@ import { ThemedView } from "./ThemedView";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Header = () => {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const [isModalVisible, setModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-300)).current; // Fix here
+  const { user, isLogged, logout } = useGlobalContext();
 
   // Function to toggle the modal
   const toggleModal = () => {
@@ -38,6 +40,13 @@ const Header = () => {
         useNativeDriver: true,
       }).start(() => setModalVisible(false));
     }
+  };
+  const handleLogout = () => {
+    console.log("logout");
+    console.log("user is : ", user);
+    console.log("isLogged is : ", isLogged);
+    logout();
+    router.replace("/(auth)/sign-in");
   };
 
   return (
@@ -118,12 +127,26 @@ const Header = () => {
             },
           ]}
         >
-          <Image
-            source={require("../assets/images/malhiblogo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-            className="bg-red-700"
-          />
+          <View style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: 10,
+            height: 70,
+            width: "100%",
+          }}>
+            <Image
+              source={require("../assets/images/malhiblogo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+              className="bg-red-700"
+            />
+            <View>
+              <Text className="font-bold">Welcome  👋 </Text>
+              <Text className="font-bold uppercase">{user?.username}</Text>
+            </View>
+          </View>
           <TouchableOpacity
             style={styles.link}
             onPress={() => navigation.navigate("home")}
@@ -154,11 +177,8 @@ const Header = () => {
           >
             <Text style={styles.linkText}>Contact Us</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.link}
-            onPress={() => router.push("(auth)/sign-in")}
-          >
-            <Text style={styles.linkText}>Login / Register</Text>
+          <TouchableOpacity style={styles.link} onPress={handleLogout}>
+            <Text style={styles.linkText}>Logout</Text>
           </TouchableOpacity>
         </Animated.View>
       </Modal>
@@ -192,27 +212,27 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   iconWrapper: {
-  position: "relative",
-},
+    position: "relative",
+  },
 
-badge: {
-  position: "absolute",
-  top: -8,
-  right: -10,
-  backgroundColor: "white",
-  borderRadius: 10,
-  width:18,
-  height:18,
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 10, // Ensures the badge is on top
-},
+  badge: {
+    position: "absolute",
+    top: -8,
+    right: -10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10, // Ensures the badge is on top
+  },
 
-badgeText: {
-  color: "#7E0201",
-  fontSize: 10,
-  fontWeight: "bold",
-},
+  badgeText: {
+    color: "#7E0201",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
 
   menulogo: {
     display: "flex",
@@ -225,7 +245,7 @@ badgeText: {
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Slightly dimmed background
   },
   modalContent: {
-    width: 250,
+    width: 280,
     height: "100%",
     backgroundColor: "white",
     position: "absolute",

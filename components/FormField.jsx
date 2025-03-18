@@ -45,10 +45,10 @@ const FormField = ({
         <TextInput
           style={{
             flex: 1,
-            color: colorScheme === "dark" ? "#fff" : "black",
+            color: colorScheme === "dark" ? "#000z" : "black",
             fontSize: 20,
             fontWeight: "semibold",
-            
+            paddingHorizontal: 12,
           }}
           // className="flex-1 text-white font-psemibold text-base"
           value={value}

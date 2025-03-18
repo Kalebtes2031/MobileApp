@@ -23,12 +23,16 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { fetchNewImages, fetchPopularProducts } from "@/hooks/useFetch";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import { useRouter } from "expo-router";
 
 // Get device width for the scroll item (or use DEVICE_WIDTH for full-screen width)
 const { width: DEVICE_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 375; // Adjust as needed
 
 export default function HomeScreen() {
+  const { isLogged, user } = useGlobalContext();
+  const route = useRouter();
   const colorScheme = useColorScheme();
   const [veryPopular, setVeryPopular] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,6 +70,7 @@ export default function HomeScreen() {
   useEffect(() => {
     newestImages();
     newPopular();
+    console.log("am i logged in: " , isLogged)
   }, []);
 
   const onRefresh = React.useCallback(() => {
@@ -121,6 +126,7 @@ export default function HomeScreen() {
   let newest = "Newest Products";
 
   return (
+    user ? (
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -260,6 +266,7 @@ export default function HomeScreen() {
         </View>
       </ImageBackground>
     </ScrollView>
+  ):route.push('/(auth)/sign-in') 
   );
 }
 

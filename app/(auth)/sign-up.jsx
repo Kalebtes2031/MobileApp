@@ -63,7 +63,7 @@ const SignUp = () => {
           }}
         >
           <Image
-            source={require("@/assets/images/malhiblogo.png")}
+            source={colorScheme==="dark" ? require("@/assets/images/malhibfooterlogo.png") :require("@/assets/images/malhiblogo.png")}
             resizeMode="contain"
             className="w-[115px] h-[34px]"
             style={{

@@ -15,6 +15,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 
+import Toast from "react-native-toast-message"; // Import Toast component
 import Header from "@/components/Header"; // Import the Header component
 import SearchComp from "@/components/SearchComp";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -56,6 +57,7 @@ export default function RootLayout() {
                 <Stack.Screen name="index" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
+              <Toast/>
             </GlobalProvider>
           </ErrorBoundary>
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
