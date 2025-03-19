@@ -20,6 +20,7 @@ import Header from "@/components/Header"; // Import the Header component
 import SearchComp from "@/components/SearchComp";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import GlobalProvider from "@/context/GlobalProvider";
+import { CartProvider } from "@/context/CartProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,13 +52,15 @@ export default function RootLayout() {
           {/* <Header /> */}
           <ErrorBoundary>
             <GlobalProvider>
-              <Stack>
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <Toast/>
+              <CartProvider>
+                <Stack>
+                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <Toast/>
+              </CartProvider>
             </GlobalProvider>
           </ErrorBoundary>
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />

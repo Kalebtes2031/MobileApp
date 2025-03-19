@@ -125,8 +125,19 @@ export default function HomeScreen() {
   let most = "Most Popular";
   let newest = "Newest Products";
 
+  
+  // // Redirect if user is not authenticated
+  // useEffect(() => {
+  //   if (!user) {
+  //     route.push('/(auth)/sign-in');
+  //   }
+  // }, [user, route]);
+
+  // // If there's no user, don't render the rest of the UI
+  // if (!user) {
+  //   return null;
+  // }
   return (
-    user ? (
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -266,7 +277,6 @@ export default function HomeScreen() {
         </View>
       </ImageBackground>
     </ScrollView>
-  ):route.push('/(auth)/sign-in') 
   );
 }
 
