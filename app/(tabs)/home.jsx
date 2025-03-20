@@ -25,12 +25,14 @@ import { fetchNewImages, fetchPopularProducts } from "@/hooks/useFetch";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useRouter } from "expo-router";
+import { useCart } from "@/context/CartProvider";
 
 // Get device width for the scroll item (or use DEVICE_WIDTH for full-screen width)
 const { width: DEVICE_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 375; // Adjust as needed
 
 export default function HomeScreen() {
+  const { setCart, addItemToCart } = useCart();
   const { isLogged, user } = useGlobalContext();
   const route = useRouter();
   const colorScheme = useColorScheme();

@@ -8,18 +8,23 @@ import {
   Text,
   Modal,
   Animated,
+  Pressable,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedView } from "./ThemedView";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useCart } from "@/context/CartProvider";
+import { LayoutAnimation, UIManager, Platform } from "react-native";
+
+
 
 const Header = () => {
-  const { cart, loadCartData, removeItemFromCart } = useCart();
+  const route = useRouter();
+  const { cart, setCart, loadCartData, removeItemFromCart } = useCart();
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -82,6 +87,17 @@ const Header = () => {
   useEffect(() => {
     console.log("cart is : ", cart);
   }, []);
+
+ 
+// Modify your handleDeleteProduct function
+const handleDeleteProduct = async (itemId) => {
+  try {
+    await removeItemFromCart(itemId);
+  } catch (error) {
+    console.error("Error deleting item:", error);
+  }
+};
+  
   return (
     <SafeAreaView
       style={[
@@ -97,9 +113,9 @@ const Header = () => {
       >
         {/* Menu and logo on the left */}
         <View style={styles.menulogo}>
-          <TouchableOpacity onPress={toggleModal}>
+          <Pressable onPress={toggleModal}>
             <Ionicons name="menu" size={24} color="white" />
-          </TouchableOpacity>
+          </Pressable>
           <Image
             source={require("../assets/images/malhibfooterlogo.png")}
             style={styles.logo}
@@ -116,9 +132,9 @@ const Header = () => {
           ]}
         >
           <View style={styles.iconWrapper}>
-            <TouchableOpacity onPress={toggleCartModal}>
+            <Pressable onPress={toggleCartModal}>
               <MaterialIcons name="shopping-cart" size={24} color="white" />
-            </TouchableOpacity>
+            </Pressable>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{cart.total_items}</Text>
             </View>
@@ -184,31 +200,31 @@ const Header = () => {
           </View>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("home")}
+            onPress={() => route.push("home")}
           >
             <Text style={styles.linkText}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("shop")}
+            onPress={() => route.push("shop")}
           >
             <Text style={styles.linkText}>Shop</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("order")}
+            onPress={() => route.push("order")}
           >
             <Text style={styles.linkText}>Track Order</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("explore")}
+            onPress={() => route.push("explore")}
           >
             <Text style={styles.linkText}>About Us</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.link}
-            onPress={() => navigation.navigate("home")}
+            onPress={() => route.push("home")}
           >
             <Text style={styles.linkText}>Contact Us</Text>
           </TouchableOpacity>
@@ -294,7 +310,7 @@ const Header = () => {
                     </View>
                     <View>
                       <TouchableOpacity
-                        onPress={() => removeItemFromCart(item.id)}
+                        onPress={() => handleDeleteProduct(item.id)}
                       >
                         <Ionicons name="trash" size={24} color="black" />
                       </TouchableOpacity>
@@ -335,6 +351,7 @@ const Header = () => {
                 <Text style={{ fontWeight: "600" }}>{cart.total || 0}</Text>
               </View>
               <TouchableOpacity
+                onPress={()=> route.push('/cartscreen')}
                 style={{
                   backgroundColor: "#7E0201",
                   padding: 10,

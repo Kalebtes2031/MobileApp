@@ -45,7 +45,8 @@ import React, {
   
     // Remove an item from the cart
     const removeItemFromCart = async (itemId) => {
-      const data = await removeCartItem(itemId);
+      await removeCartItem(itemId);
+      const data = await fetchCart();
       setCart(data);
     };
   

@@ -13,14 +13,18 @@ import "../global.css";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message"; // Import Toast component
 import Header from "@/components/Header"; // Import the Header component
 import SearchComp from "@/components/SearchComp";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import GlobalProvider from "@/context/GlobalProvider";
 import { CartProvider } from "@/context/CartProvider";
+import { View } from "react-native";
+import { Text } from "react-native";
+import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,12 +58,57 @@ export default function RootLayout() {
             <GlobalProvider>
               <CartProvider>
                 <Stack>
-                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
                   <Stack.Screen name="index" options={{ headerShown: false }} />
+
+                  <Stack.Screen
+                    name="carddetail"
+                    options={{
+                      headerShown: false,
+                      // header: ({ navigation }) => (
+                      //   <View
+                      //     style={{
+                      //       height: 60,
+                      //       backgroundColor: "#fff",
+                      //       flexDirection: "row",
+                      //       alignItems: "center",
+                      //       paddingHorizontal: 10,
+                      //     }}
+                      //   >
+                      //     <TouchableOpacity
+                      //       onPress={() => navigation.goBack()}
+                      //       style={{ marginRight: 10, paddingHorizontal: 12 }}
+                      //     >
+                      //       <Ionicons
+                      //         name="arrow-back"
+                      //         size={24}
+                      //         color="gray"
+                      //       />
+                      //     </TouchableOpacity>
+                      //     <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                      //       Product Detail
+                      //     </Text>
+                      //   </View>
+                      // ),
+                    }}
+                  />
+                  <Stack.Screen
+                    name="cartscreen"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+
                   <Stack.Screen name="+not-found" />
                 </Stack>
-                <Toast/>
+                <Toast />
               </CartProvider>
             </GlobalProvider>
           </ErrorBoundary>

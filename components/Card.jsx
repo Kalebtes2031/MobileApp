@@ -1,36 +1,65 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useCart } from "@/context/CartProvider";
+import Toast from "react-native-toast-message";
+import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native"; // <-- Import useNavigation
+
 
 const Card = ({ product }) => {
+  const { addItemToCart } = useCart();
   const [isFavorited, setIsFavorited] = useState(false);
   const colorScheme = useColorScheme();
+  const route = useRouter();
+  const navigation = useNavigation(); // <-- Get navigation instance
+
 
   const toggleFavorite = () => {
     setIsFavorited(!isFavorited);
   };
+  // const handlePress = () => {
+  //   route.push("/(tabs)/carddetail", {product})
+  //   // navigation.navigate("/(tab)/carddetail", { product });
+  //   console.log("Card pressed!", product);
+  // };
   const handlePress = () => {
+    // Convert the product object to a JSON string and encode it for the URL
+    route.push(`/carddetail?product=${encodeURIComponent(JSON.stringify(product))}`);
     console.log("Card pressed!", product);
   };
 
+  
+  const handleAddCartClick = () => {
+    // navigate(`/shop/${id}`); // Redirect to /shop/:id
+    console.log("Cart clicked!", product.id);
+    addItemToCart(product.id, 1);
+    // Toast.show({
+    //   type: "success",
+    //   text1: "item added to cart",
+    // });
+  };
   return (
     <TouchableOpacity onPress={handlePress} style={styles.cardcontainer}>
       <View style={styles.card}>
         {/* Image Container with Icons */}
         <View style={styles.imageContainer}>
           <Image source={{ uri: product.image }} style={styles.image} />
-          <TouchableOpacity
-            style={styles.cartIcon}
-            onPress={() => alert("Added to cart")}
-          >
-            <AntDesign name="shoppingcart" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.favoriteIcon}
-            onPress={toggleFavorite}
-          >
+          <View style={styles.cartIcon}>
+            <TouchableOpacity onPress={handleAddCartClick}>
+              <AntDesign name="shoppingcart" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.favoriteIcon} onPress={toggleFavorite}>
             <MaterialIcons
               name={isFavorited ? "favorite" : "favorite-border"}
               size={24}
