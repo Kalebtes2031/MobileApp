@@ -9,6 +9,7 @@ import {
   Modal,
   Animated,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -134,10 +135,10 @@ const handleDeleteProduct = async (itemId) => {
           <View style={styles.iconWrapper}>
             <Pressable onPress={toggleCartModal}>
               <MaterialIcons name="shopping-cart" size={24} color="white" />
-            </Pressable>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{cart.total_items}</Text>
             </View>
+            </Pressable>
           </View>
 
           <View style={styles.iconWrapper}>
@@ -155,7 +156,7 @@ const handleDeleteProduct = async (itemId) => {
         </ThemedView>
       </ThemedView>
 
-      {/* Slide-in Modal */}
+      {/* Slide-in menu Modal in left side */}
       <Modal transparent visible={isModalVisible} animationType="none">
         {/* Overlay for closing the modal */}
         <TouchableOpacity
@@ -233,6 +234,7 @@ const handleDeleteProduct = async (itemId) => {
           </TouchableOpacity>
         </Animated.View>
       </Modal>
+      {/* Slide-in cart Modal in right side */}
       <Modal transparent visible={cartModalVisible} animationType="none">
         {/* Overlay to close the cart modal */}
         <TouchableOpacity
@@ -242,142 +244,136 @@ const handleDeleteProduct = async (itemId) => {
         />
         {/* Animated cart modal content sliding from the right */}
         <Animated.View
-          style={[
-            styles.cartModalContent,
-            {
-              transform: [{ translateX: cartSlideAnim }],
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-            },
-          ]}
-        >
-          <View style={{ position: "relative", height: "100%" }}>
+  style={[
+    styles.cartModalContent,
+    {
+      transform: [{ translateX: cartSlideAnim }],
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+    },
+  ]}
+>
+  <View style={{ position: "relative", height: "100%" }}>
+    {/* Header */}
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 10,
+        height: 70,
+        width: "100%",
+      }}
+    >
+      <Text style={{ padding: 20, fontWeight: "600", fontSize: 12 }}>
+        Shopping Cart
+      </Text>
+      <TouchableOpacity onPress={toggleCartModal}>
+        <Ionicons name="close" size={24} color="black" />
+      </TouchableOpacity>
+    </View>
+
+    {/* Scrollable Cart Items Container */}
+    <View style={{ height: 500 /* fixed height, adjust as needed */ }}>
+      <ScrollView>
+        {cart.items && cart.items.length > 0 ? (
+          cart.items.map((item) => (
             <View
+              key={item.id}
               style={{
-                display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
-                paddingHorizontal: 10,
-                height: 70,
-                width: "100%",
-                // backgroundColor: "#7E0201",
+                padding: 16,
+                borderBottomWidth: 1,
+                borderBottomColor: "#ddd",
               }}
             >
-              <Text style={{ padding: 20, fontWeight: "600", fontSize: 12 }}>
-                Shopping Cart
-              </Text>
-              <TouchableOpacity onPress={toggleCartModal}>
-                <Ionicons name="close" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-            <View>
-              {cart.items && cart.items.length > 0 ? (
-                cart.items.map((item) => (
-                  <View
-                    key={item.id}
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: 16,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#ddd",
-                    }}
-                  >
-                    <View style={{ display: "flex", flexDirection: "row" }}>
-                      <View>
-                        <Image
-                          source={{
-                            uri:
-                              item.product?.image ||
-                              "https://via.placeholder.com/60",
-                          }}
-                          style={styles.productImage}
-                        />
-                      </View>
-                      <View>
-                        <Text style={{ width: 135 }}>
-                          {item.product.item_name}
-                        </Text>
-                        <Text>
-                          {item.quantity} X {item.product.price}
-                        </Text>
-                      </View>
-                    </View>
-                    <View>
-                      <TouchableOpacity
-                        onPress={() => handleDeleteProduct(item.id)}
-                      >
-                        <Ionicons name="trash" size={24} color="black" />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))
-              ) : (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={{
+                    uri:
+                      item.product?.image ||
+                      "https://via.placeholder.com/60",
+                  }}
+                  style={styles.productImage}
+                />
                 <View>
-                  <Text> No items in cart</Text>
+                  <Text style={{ width: 135 }}>
+                    {item.product.item_name}
+                  </Text>
+                  <Text>
+                    {item.quantity} X {item.product.price}
+                  </Text>
                 </View>
-              )}
-            </View>
-            {/* bottom part */}
-            <View
-              style={{
-                position: "absolute",
-                bottom: 0,
-                padding: 20,
-                width: "100%",
-                marginBottom: 20,
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderTopWidth: 1,
-                  borderTopColor: "#ddd",
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#ddd",
-                  paddingVertical: 10,
-                  paddingHorizontal: 5,
-                }}
-              >
-                <Text style={{ fontWeight: "600" }}>Total</Text>
-                <Text style={{ fontWeight: "600" }}>{cart.total || 0}</Text>
               </View>
-              <TouchableOpacity
-                onPress={()=> route.push('/cartscreen')}
-                style={{
-                  backgroundColor: "#7E0201",
-                  padding: 10,
-                  borderRadius: 35,
-                  marginTop: 10,
-                }}
-              >
-                <Text style={{ color: "white", textAlign: "center" }}>
-                  VIEW CART
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#7E0201",
-                  padding: 10,
-                  borderRadius: 35,
-                  marginTop: 10,
-                }}
-              >
-                <Text style={{ color: "white", textAlign: "center" }}>
-                  PROCEED TO CHECKOUT
-                </Text>
+              <TouchableOpacity onPress={() => handleDeleteProduct(item.id)}>
+                <Ionicons name="trash" size={24} color="black" />
               </TouchableOpacity>
             </View>
+          ))
+        ) : (
+          <View>
+            <Text>No items in cart</Text>
           </View>
-        </Animated.View>
+        )}
+      </ScrollView>
+    </View>
+
+    {/* Bottom Part */}
+    <View
+      style={{
+        position: "absolute",
+        bottom: 0,
+        padding: 20,
+        width: "100%",
+        marginBottom: 20,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderTopWidth: 1,
+          borderTopColor: "#ddd",
+          borderBottomWidth: 1,
+          borderBottomColor: "#ddd",
+          paddingVertical: 10,
+          paddingHorizontal: 5,
+        }}
+      >
+        <Text style={{ fontWeight: "600" }}>Total</Text>
+        <Text style={{ fontWeight: "600" }}>{cart.total || 0}</Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => route.push("/cartscreen")}
+        style={{
+          backgroundColor: "#7E0201",
+          padding: 10,
+          borderRadius: 35,
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ color: "white", textAlign: "center" }}>VIEW CART</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+      onPress={() => route.push("/checkout")}
+        style={{
+          backgroundColor: "#7E0201",
+          padding: 10,
+          borderRadius: 35,
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ color: "white", textAlign: "center" }}>PROCEED TO CHECKOUT</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Animated.View>
+
       </Modal>
     </SafeAreaView>
   );
@@ -422,7 +418,7 @@ const styles = StyleSheet.create({
     height: 18,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 10, // Ensures the badge is on top
+    // zIndex: 10, // Ensures the badge is on top
   },
 
   badgeText: {

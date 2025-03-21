@@ -105,6 +105,12 @@ export default function RootLayout() {
                       headerShown: false,
                     }}
                   />
+                  <Stack.Screen
+                    name="checkout"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
 
                   <Stack.Screen name="+not-found" />
                 </Stack>
