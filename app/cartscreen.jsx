@@ -153,7 +153,7 @@ const CartScreen = () => {
         </View>
         <View style={styles.proceedCheckout}>
           <TouchableOpacity
-            onPress={() => router.push("/cartscreen")}
+            onPress={() => router.push("/checkout")}
             style={{
               backgroundColor: "#7E0201",
               padding: 10,

@@ -111,6 +111,12 @@ export default function RootLayout() {
                       headerShown: false,
                     }}
                   />
+                  <Stack.Screen
+                    name="directpayment"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
 
                   <Stack.Screen name="+not-found" />
                 </Stack>

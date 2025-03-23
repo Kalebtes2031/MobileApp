@@ -240,7 +240,11 @@ export const fetchPaymentHistoryBasedOrderId = async (id) => {
 };
 
 export const payUsingBankTransfer = async (paymentData) => {
-    const response = await pay.post("update-payment-status/", paymentData);
+    const response = await pay.post("update-payment-status/", paymentData,{
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    });
     return response;
 };
 

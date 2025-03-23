@@ -24,23 +24,26 @@ const CheckoutPage = () => {
   const [paymentStatus, setPaymentStatus] = useState("");
   const [amountToPay, setAmountToPay] = useState(null);
   const [selectedRadio, setSelectedRadio] = useState(false);
-
+  const [selectedOption, setSelectedOption] = useState("total"); // Tracks the selected option
 
   const choiceofpayment = () => {
-    
-      handleBankPayment();
-    
+    handleBankPayment();
   };
   const handleBankPayment = () => {
     const paymentData = {
       orderId,
       amountToPay,
       paymentStatus,
-      // ...formData,
+      // ...other data,
     };
-    alert('Wait till tommorow, please :)')
-    // route.push("/bankpayment", { state: paymentData });
+    // Pass the paymentData as a query parameter
+    route.push(
+      `/directpayment?paymentData=${encodeURIComponent(
+        JSON.stringify(paymentData)
+      )}`
+    );
   };
+
   const handlePlaceOrder = async () => {
     // setShowModal(true);
     if (cart.total < 1 || cart.items.length < 1) {
@@ -170,8 +173,8 @@ const CheckoutPage = () => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.placeOrderButton}
-            onPress={handlePlaceOrder}
-        //   disabled={isLoading}
+          onPress={handlePlaceOrder}
+          //   disabled={isLoading}
         >
           <Text style={styles.placeOrderText}>
             {isLoading ? "Placing Order" : "Place Order"}
@@ -197,37 +200,39 @@ const CheckoutPage = () => {
               {/* Pay Advance Amount */}
               <TouchableOpacity
                 style={styles.radioLabel}
-                onPress={() => {setAmountToPay(advanceAmount),!selectedRadio}}
+                onPress={() => {
+                  setAmountToPay(advanceAmount);
+                  setSelectedOption("advance");
+                }}
               >
-                <View style={styles.radioButton}>
-                 
-                  {/* Optionally, show a filled circle when selected */}
-                </View>
+              <View style={selectedOption === "advance" && styles.radioButtons}>
+                <View
+                  style={[
+                    styles.radioButton,
+                    selectedOption === "advance" && styles.radioSelected,
+                  ]}
+                /></View>
                 <Text style={styles.radioText}>
-                  Pay advance br     {advanceAmount}
+                  Pay Advance Br {advanceAmount}
                 </Text>
               </TouchableOpacity>
+
               {/* Pay Total Amount */}
               <TouchableOpacity
                 style={styles.radioLabel}
-                onPress={() => {setAmountToPay(totalAmount), !selectedRadio}}
+                onPress={() => {
+                  setAmountToPay(totalAmount);
+                  setSelectedOption("total");
+                }}
               >
-                <View style={styles.radioButton}>
-                  {/* Optionally, show a filled circle when selected */}
-                  {/* {selectedRadio && (
-                    <View style={{ 
-                        height: 20,
-                        width: 20,
-                        backgroundColor: "green"
-                        }}>
-
-                        </View>
-                  )} */}
-                </View>
-                <Text style={styles.radioText}>
-                  Pay Total br
-                  {totalAmount}
-                </Text>
+               <View style={selectedOption === "total" && styles.radioButtons}>
+                <View
+                  style={[
+                    styles.radioButton,
+                    selectedOption === "total" && styles.radioSelected,
+                  ]}
+                /></View>
+                <Text style={styles.radioText}>Pay Total Br {totalAmount}</Text>
               </TouchableOpacity>
             </View>
 
@@ -355,15 +360,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
   },
+  radioButtons: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "gray",
+    display:"flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft:8, 
+    marginRight:12
+  },
   radioButton: {
     height: 20,
     width: 20,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#7E0201",
-    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "gray",
     justifyContent: "center",
-    marginRight: 12,
+    alignItems: "center",
+  },
+  // radioSelected: {
+  //   backgroundColor: "green", // Conditional green color
+  //   borderColor: "green",
+  // },
+  radioLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  radioText: {
+    marginLeft: 10,
+    fontSize: 16,
   },
   radioSelected: {
     height: 12,
@@ -406,7 +436,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)", // bg-black bg-opacity-50
     justifyContent: "center",
     alignItems: "center",
-    
   },
   modalContainer: {
     backgroundColor: "#fff", // bg-white
