@@ -5,6 +5,9 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
+  Pressable,
+  Modal,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalProvider";
@@ -15,6 +18,7 @@ import { fetchOrderHistory } from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { RadioButton } from "react-native-paper";
 
 const Order = () => {
   const route = useRouter();
@@ -39,14 +43,14 @@ const Order = () => {
 
   const handleSubmitPayment = () => {
     const { order, buttonType, amount } = selectedOrder;
-     if (paymentType === "Direct Bank Payment") {
+    if (paymentType === "Direct Bank Payment") {
       handleBankPayment(order, buttonType, amount);
     }
     closeModal();
   };
   const handleBankPayment = (order_id, buttonType, amount) => {
-    if (buttonType === "advance"){
-      amount = (amount *0.3).toFixed(2);
+    if (buttonType === "advance") {
+      amount = (amount * 0.3).toFixed(2);
     }
     console.log(order_id);
     console.log("another one: ", buttonType);
@@ -96,10 +100,10 @@ const Order = () => {
             {item.product?.item_name || "Unknown Product"}
           </Text>
           <View style={styles.priceRow}>
-            <Text style={styles.itemPrice}>${item.product?.price}</Text>
+            <Text style={styles.itemPrice}>Br{item.product?.price}</Text>
             <Text style={styles.itemQuantity}>x {item.quantity}</Text>
           </View>
-          <Text style={styles.itemTotal}>Total: ${item.total_price}</Text>
+          <Text style={styles.itemTotal}>Total: Br{item.total_price}</Text>
         </View>
       </View>
     ));
@@ -152,49 +156,78 @@ const Order = () => {
           <Text style={styles.metaText}>
             Date: {format(new Date(order.created_at), "MMM dd, yyyy HH:mm")}
           </Text>
-          <View style={styles.paymentStatusContainer}>
-          <Text style={[styles.metaText, {marginRight:5}]}>
-            Payment: 
-          </Text>
-            {order.payment_status === "Fully Paid" ? (
-              <FontAwesome
-                name="check-circle"
-                style={[styles.icon, styles.green]}
-              />
-            ) : order.payment_status === "Pending" ? (
-              <FontAwesome
-                name="exclamation-circle"
-                style={[styles.icon, styles.yellow]}
-              />
-            ) : order.payment_status === "Partial Payment" ? (
-              <FontAwesome
-                name="exclamation-triangle"
-                style={[styles.icon, styles.orange]}
-              />
-            ) : (
-              <FontAwesome
-                name="times-circle"
-                style={[styles.icon, styles.red]}
-              />
-            )}
-            <Text style={styles.text}>
-              {order.payment_status === "Fully Paid"
-                ? "Fully Paid"
-                : order.payment_status === "Pending"
-                ? "Pending"
-                : order.payment_status === "Partial Payment"
-                ? "Partial Payment"
-                : "Cancel"}
-            </Text>
-          </View>
         </View>
 
         <Text style={styles.sectionHeader}>ITEMS</Text>
         {renderOrderItems(order.items)}
+        <View style={styles.paymentStatusContainer}>
+          <Text style={[styles.metaText, { marginRight: 5 }]}>Payment:</Text>
+          {order.payment_status === "Fully Paid" ? (
+            <FontAwesome
+              name="check-circle"
+              style={[styles.icon, styles.green]}
+            />
+          ) : order.payment_status === "Pending" ? (
+            <FontAwesome
+              name="exclamation-circle"
+              style={[styles.icon, styles.yellow]}
+            />
+          ) : order.payment_status === "Partial Payment" ? (
+            <FontAwesome
+              name="exclamation-triangle"
+              style={[styles.icon, styles.orange]}
+            />
+          ) : (
+            <FontAwesome
+              name="times-circle"
+              style={[styles.icon, styles.red]}
+            />
+          )}
+          <Text style={styles.text}>
+            {order.payment_status === "Fully Paid"
+              ? "Fully Paid"
+              : order.payment_status === "Pending"
+              ? "Pending"
+              : order.payment_status === "Partial Payment"
+              ? "Partial Payment"
+              : "Cancel"}
+          </Text>
+        </View>
+        <View style={{
+          display:"flex",
+          justifyContent:"center",
+        }}>
+          {order.payment_status === "Partial Payment" && (
+            <TouchableOpacity
+              style={[styles.button, styles.partialPaymentButton]}
+              onPress={() =>
+                openModal(order.id, "remaining", order.remaining_payment)
+              }
+            >
+              <Text style={styles.buttonText}>Payment Remaining</Text>
+            </TouchableOpacity>
+          )}
+          {order.payment_status === "Pending" && (
+            <View style={styles.pendingButtonsContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.fullPaymentButton]}
+                onPress={() => openModal(order.id, "full_payment", order.total)}
+              >
+                <Text style={styles.buttonText}>Full Payment</Text>
+              </TouchableOpacity>
 
+              <TouchableOpacity
+                style={[styles.button, styles.advancePaymentButton]}
+                onPress={() => openModal(order.id, "advance", order.total)}
+              >
+                <Text style={styles.buttonText}>Pay Advance</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
         <View style={styles.totalContainer}>
           <Text style={styles.orderTotal}>Order Total:</Text>
-          <Text style={styles.orderTotal}>${order.total}</Text>
+          <Text style={styles.orderTotal}>Br{order.total}</Text>
         </View>
       </View>
     ));
@@ -223,6 +256,46 @@ const Order = () => {
             <Text style={styles.ordersCount}>{orders.length} orders found</Text>
             {renderOrders()}
           </ScrollView>
+          <Modal
+            visible={isModalOpen}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={closeModal}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Choose</Text>
+                <View style={styles.radioGroup}>
+                  <View style={styles.radioOption}>
+                    <RadioButton
+                      value="Direct Bank Payment"
+                      status={
+                        paymentType === "Direct Bank Payment"
+                          ? "checked"
+                          : "unchecked"
+                      }
+                      onPress={() => setPaymentType("Direct Bank Payment")}
+                    />
+                    <Text style={styles.radioLabel}>Direct Bank Payment</Text>
+                  </View>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={closeModal}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.proceedButton}
+                    onPress={handleSubmitPayment}
+                  >
+                    <Text style={styles.proceedButtonText}>Proceed</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
       )}
     </View>
@@ -394,7 +467,7 @@ const styles = StyleSheet.create({
   paymentStatusContainer: {
     flexDirection: "row",
     alignItems: "center",
-    alignContent:"conter",
+    alignContent: "conter",
   },
   icon: {
     marginRight: 8,
@@ -414,5 +487,97 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: "500", // Tailwind font-medium
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: "80%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  radioGroup: {
+    marginBottom: 20,
+  },
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  radioLabel: {
+    fontSize: 14,
+    color: "#333",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+  },
+  cancelButton: {
+    backgroundColor: "#e0e0e0",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: "#555",
+    fontSize: 14,
+  },
+  proceedButton: {
+    backgroundColor: "#a67c52", // Replace with your desired color
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  proceedButtonText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  button: {
+    height: 30,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#D1D5DB", // Gray-300
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 12,
+    fontFamily: "System", // Replace with your font family if custom
+    color: "white",
+  },
+  partialPaymentButton: {
+    backgroundColor: "#F59E0B", // Yellow-500
+    marginTop: 12,
+  },
+  pendingButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "start",
+    alignItems: "center",
+    gap: 28,
+    marginTop:12,
+  },
+  fullPaymentButton: {
+    backgroundColor: "#A67C52", // Primary-lightbrown
+  },
+  advancePaymentButton: {
+    backgroundColor: "#F97316", // Orange-500
   },
 });

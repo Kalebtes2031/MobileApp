@@ -6,7 +6,8 @@ import { useRouter } from "expo-router";
 
 
 // const baseUrl = "https://malhibnewbackend.activetechet.com/";
-const baseUrl = "http://192.168.100.51:8000/";
+// const baseUrl = "http://192.168.100.51:8000/";  //active wifi
+const baseUrl = "http://192.168.1.2:8000/";  //home wifi
 
 const auth = axios.create({
     baseURL: baseUrl,
